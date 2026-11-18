@@ -91,4 +91,374 @@ h3{margin:0 0 8px;font-size:15px}
 <div class="md" id="shr" hidden><div class="sheet"><div class="mh"><h3>Share</h3><button id="sy-sx" type="button">Done</button></div><div class="mini">OWNER</div><div id="sy-own" style="direction:ltr;overflow-wrap:anywhere"></div><div class="mini">MEMBERS (can edit everything)</div><div id="sy-ml"></div><div id="sy-add"><label for="sy-em">Add member email</label><div class="addrow"><input id="sy-em" type="email" inputmode="email" placeholder="worker@example.com"><button class="add" id="sy-ab" type="button" style="flex:0 0 90px;background:var(--g)">Add</button></div><p style="font-size:12px;color:var(--mut)">They create an account with this same email and verify it.</p></div><p id="sy-ro" style="font-size:13px;color:var(--mut)" hidden>Only the owner can change who has access or delete this restaurant.</p><div class="msg" id="sy-sm"></div><button class="add" id="sy-del" type="button" style="margin-top:8px" hidden>Delete this restaurant</button></div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="firebase-config.js"></script>
-<script type="text/plain" id="app
+<script type="text/plain" id="appjs">
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const p=String(s||'').split('-').map(Number);return p.length===3&&p[0]?new Date(p[0],p[1]-1,p[2]):null};
+const addD=(s,n)=>{const d=parse(s)||new Date();d.setDate(d.getDate()+n);return iso(d)};
+const DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const dn=s=>DN[parse(s).getDay()];
+const sd=s=>{const d=parse(s);return (d.getMonth()+1)+'/'+d.getDate()};
+const num=v=>{const n=parseFloat(v);return isFinite(n)?n:0};
+const fmt=n=>(Math.round(n*100)/100).toLocaleString('en-US');
+const CATS=['Food & supplies','Salaries','Rent','Utilities','Maintenance','Cleaning & packaging','Other'];
+function monday(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return iso(d)}
+let S;try{S=JSON.parse(localStorage.getItem(window.__CK))}catch(e){S=null}
+if(!S||typeof S!=='object'||!parse(S.week)||typeof S.days!=='object'||!S.days)S={name:'',cur:'$',week:monday(),days:{}};
+S.name=String(S.name||'');S.cur=String(S.cur||'$');
+const save=()=>{try{localStorage.setItem(window.__CK,JSON.stringify(S))}catch(e){}if(window.__onSave)window.__onSave()};
+const dates=()=>Array.from({length:7},(_,i)=>addD(S.week,i));
+const sum=a=>a.reduce((t,e)=>t+num(e.a),0);
+const isCr=e=>!!e&&e.t==='credit';
+const norm=o=>{
+  if(Array.isArray(o.inc)){
+    if(o.cash===undefined&&o.credit===undefined){const cr=sum(o.inc.filter(isCr)),c=sum(o.inc)-cr;o.credit=cr?String(cr):'';o.cash=c?String(c):''}
+    delete o.inc}
+  if(o.cash===undefined)o.cash='';if(o.credit===undefined)o.credit='';if(!Array.isArray(o.exp))o.exp=[];return o};
+const day=d=>norm(S.days[d]||(S.days[d]={}));
+const tot=d=>{const o=S.days[d];if(!o)return{i:0,e:0,ci:0,cr:0,ec:0,ek:0};norm(o);const ci=num(o.cash),cr=num(o.credit),ek=sum(o.exp.filter(isCr)),e=sum(o.exp);return{i:ci+cr,e:e,ci:ci,cr:cr,ec:e-ek,ek:ek}};
+const money=n=>fmt(n)+' '+S.cur;
+const cards=t=>{
+  const b=(c,l,v,a,z)=>'<section class="sc '+c+'"><div class="l">'+l+'</div><div class="v">'+money(v)+'</div><div class="two"><div><span>'+a[0]+'</span><b>'+money(a[1])+'</b></div><div><span>'+z[0]+'</span><b>'+money(z[1])+'</b></div></div></section>';
+  return b('net','NET PROFIT',t.i-t.e,['CASH NET',t.ci-t.ec],['CREDIT NET',t.cr-t.ek])+b('ex','EXPENSES',t.e,['CASH',t.ec],['CREDIT',t.ek])+b('in','TOTAL INCOME',t.i,['CASH',t.ci],['CREDIT',t.cr]);
+};
+function head(){$('bn').textContent=S.name||'Restaurant Accounts';const d=dates();$('bt').textContent='Week: '+sd(d[0])+' - '+sd(d[6])+' ('+d[0].slice(0,4)+')'}
+function totals(){
+  const W={i:0,e:0,ci:0,cr:0,ec:0,ek:0};
+  dates().forEach(x=>{const q=tot(x);for(const k in W)W[k]+=q[k]});
+  $('wsum').innerHTML=cards(W);
+}
+function drawDays(){
+  $('days').innerHTML=dates().map((x,i)=>{const o=day(x),t=tot(x);
+    return '<div class="dr"><div class="dh"><div><b>'+dn(x)+'</b><span>'+sd(x)+'</span></div><div class="dt" id="rt'+i+'">'+money(t.i-t.e)+'</div></div>'
+    +'<div class="g3"><div><label class="lc">CREDIT</label><input type="number" inputmode="decimal" placeholder="0.00" data-i="'+i+'" data-f="credit" value="'+esc(o.credit)+'"></div>'
+    +'<div><label class="lk">CASH</label><input type="number" inputmode="decimal" placeholder="0.00" data-i="'+i+'" data-f="cash" value="'+esc(o.cash)+'"></div>'
+    +'<div><label class="le">EXPENSES</label><button type="button" class="eb" data-e="'+i+'" id="re'+i+'">'+money(t.e)+'</button></div></div></div>'}).join('');
+}
+function upd(i){
+  const t=tot(dates()[i]),a=$('rt'+i),b=$('re'+i);
+  if(a)a.textContent=money(t.i-t.e);if(b)b.textContent=money(t.e);totals();
+}
+function render(){head();$('wk').value=S.week;$('nm').value=S.name;$('cu').value=S.cur;drawDays();totals()}
+
+let MI=-1;
+function mtot(){const t=tot(dates()[MI]);$('mc').textContent=money(t.ec);$('mk').textContent=money(t.ek)}
+function drawM(){
+  const o=day(dates()[MI]);
+  $('ml').innerHTML=o.exp.map((e,j)=>'<div class="row"><select class="c" data-j="'+j+'" data-f="c">'+CATS.map(c=>'<option'+(c===e.c?' selected':'')+'>'+c+'</option>').join('')+'</select><input class="a" type="number" inputmode="decimal" placeholder="Amount" data-j="'+j+'" data-f="a" value="'+esc(e.a)+'"><select class="t" data-j="'+j+'" data-f="t"><option value="cash"'+(e.t==='credit'?'':' selected')+'>Cash</option><option value="credit"'+(e.t==='credit'?' selected':'')+'>Credit</option></select><input class="n" placeholder="What is this expense?" data-j="'+j+'" data-f="n" value="'+esc(e.n)+'"><button class="x" type="button" data-dj="'+j+'">×</button></div>').join('');
+  mtot();
+}
+function openM(i){
+  MI=i;const x=dates()[i];$('mt').textContent='Expenses - '+dn(x)+' '+sd(x);
+  drawM();$('md').hidden=false;
+}
+function closeM(){
+  if(MI>=0){const o=day(dates()[MI]);o.exp=o.exp.filter(e=>num(e.a)||e.n);save();upd(MI)}
+  MI=-1;$('md').hidden=true;
+}
+const onIn=e=>{
+  const t=e.target;
+  if(t.id==='nm'){S.name=t.value;head();save();return}
+  if(t.id==='cu'){S.cur=t.value;drawDays();totals();save();return}
+  if(t.id==='wk'){if(parse(t.value)){S.week=t.value;save();render()}return}
+  if(t.dataset.j!=null&&MI>=0){const o=day(dates()[MI]);if(o.exp[+t.dataset.j]){o.exp[+t.dataset.j][t.dataset.f]=t.value;save();upd(MI);mtot()}return}
+  if(t.dataset.i!=null&&t.dataset.f){day(dates()[+t.dataset.i])[t.dataset.f]=t.value;save();upd(+t.dataset.i)}
+};
+document.addEventListener('input',onIn);
+document.addEventListener('change',onIn);
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.e!=null)openM(+t.dataset.e);
+  else if(t.dataset.dj!=null&&MI>=0){day(dates()[MI]).exp.splice(+t.dataset.dj,1);save();drawM();upd(MI)}
+});
+const addX=t=>{if(MI<0)return;day(dates()[MI]).exp.push({c:CATS[0],a:'',t:t,n:''});save();drawM();upd(MI);const q=$('ml').querySelectorAll('input.a');if(q.length)q[q.length-1].focus()};
+$('ma').onclick=()=>addX('cash');$('mb').onclick=()=>addX('credit');
+$('mx').onclick=closeM;
+$('md').onclick=e=>{if(e.target===$('md'))closeM()};
+$('nx').onclick=()=>{S.week=addD(S.week,7);save();render()};
+
+function canvases(){
+  const pages=[];let c,x,y;
+  const np=()=>{c=document.createElement('canvas');c.width=1240;c.height=1754;x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,1240,1754);pages.push(c);y=80};
+  const T=(t,px,py,o)=>{o=o||{};x.direction='ltr';x.font=(o.b?'bold ':'')+(o.s||28)+'px Arial,Helvetica,sans-serif';x.fillStyle=o.c||'#1c2b33';x.textAlign=o.a||'left';x.fillText(t,px,py)};
+  const R=(py,h,col)=>{x.fillStyle=col;x.fillRect(70,py,1100,h)};
+  const row=(a,b,cc,d,o)=>{T(a,90,y,o);T(b,660,y,Object.assign({a:'center'},o));T(cc,850,y,Object.assign({a:'center'},o));T(d,1050,y,Object.assign({a:'center'},o))};
+  np();x.fillStyle='#0f8b8d';x.fillRect(0,0,1240,190);
+  const d=dates();
+  T(S.name||'Restaurant Accounts',70,85,{s:48,b:1,c:'#fff'});
+  T('Weekly report: '+sd(d[0])+' - '+sd(d[6])+' / '+d[6].slice(0,4),70,145,{s:30,c:'#fff'});
+  y=270;R(y-45,62,'#d7efee');row('Day','Income','Expenses','Net',{b:1,c:'#094f51'});
+  let wi=0,we=0,wci=0,wcr=0,wec=0,wek=0;
+  d.forEach(z=>{y+=70;const q=tot(z);wi+=q.i;we+=q.e;wci+=q.ci;wcr+=q.cr;wec+=q.ec;wek+=q.ek;row(dn(z)+' '+sd(z),fmt(q.i),fmt(q.e),fmt(q.i-q.e),{c:'#1c2b33'});x.fillStyle='#cfd9df';x.fillRect(70,y+20,1100,2)});
+  y+=80;R(y-45,62,'#0f8b8d');row('Total',fmt(wi),fmt(we),fmt(wi-we),{b:1,c:'#fff'});
+  const mm=v=>fmt(v)+' '+S.cur;
+  const blk=(title,v0,l1,v1,l2,v2,bg,col,sub)=>{
+    y+=20;const tp=y;x.fillStyle=bg;x.fillRect(70,tp,1100,140);
+    T(title,100,tp+46,{b:1,c:col,s:30});T(mm(v0),1140,tp+46,{a:'right',b:1,c:col,s:36});
+    x.fillStyle=sub;x.fillRect(95,tp+68,525,58);x.fillRect(630,tp+68,515,58);
+    T(l1,115,tp+107,{b:1,c:col,s:25});T(mm(v1),600,tp+107,{a:'right',b:1,c:col,s:29});
+    T(l2,650,tp+107,{b:1,c:col,s:25});T(mm(v2),1125,tp+107,{a:'right',b:1,c:col,s:29});
+    y=tp+140;
+  };
+  y+=30;
+  blk('TOTAL INCOME',wi,'Cash',wci,'Credit',wcr,'#e3ecfb','#1f4fb2','#cddbf6');
+  blk('NET PROFIT',wi-we,'Cash net',wci-wec,'Credit net',wcr-wek,'#e6f4ea','#1e7a33','#cde7d4');
+  blk('EXPENSES',we,'Cash',wec,'Credit',wek,'#fbe6e8','#b02a3a','#f4ccd1');
+  T('Currency: '+S.cur,90,y+70,{s:24,c:'#5f7f8f'});
+  y+=150;T('Daily details',70,y,{s:36,b:1,c:'#094f51'});y+=30;
+  d.forEach(z=>{
+    const o=S.days[z];if(!o)return;norm(o);
+    const items=[];
+    if(num(o.cash))items.push(['Income - Cash',num(o.cash),'#2f9e44']);
+    if(num(o.credit))items.push(['Income - Credit',num(o.credit),'#2f9e44']);
+    o.exp.forEach(e=>{if(num(e.a)||e.n)items.push(['Expense - '+e.c+' - '+(e.t==='credit'?'Credit':'Cash')+(e.n?': '+String(e.n).slice(0,40):''),num(e.a),'#d6336c'])});
+    if(!items.length)return;
+    if(y>1500)np();
+    y+=65;R(y-42,58,'#d7efee');T(dn(z)+' '+sd(z),90,y,{b:1,c:'#094f51'});
+    items.forEach(m=>{if(y>1680)np();y+=52;T(m[0],100,y,{s:25});T(fmt(m[1]),1150,y,{a:'right',s:25,b:1,c:m[2]})});
+    y+=25;
+  });
+  return pages;
+}
+function buildPdf(){
+  const J=window.jspdf&&window.jspdf.jsPDF;if(!J)return null;
+  const doc=new J({unit:'pt',format:'a4'});
+  canvases().forEach((c,i)=>{if(i)doc.addPage();doc.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,595.28,841.89)});
+  return doc;
+}
+let D=null;
+try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{D=d}).catch(()=>{})}catch(e){}
+function preview(){
+  if($('pv'))return;
+  const w=document.createElement('div');w.id='pv';
+  w.innerHTML='<div class="pvh"><span>Press and hold an image, then choose Share or Save</span><button type="button" id="pvx">Close</button></div>'+canvases().map(c=>'<img alt="Report" src="'+c.toDataURL('image/jpeg',0.9)+'">').join('');
+  document.body.appendChild(w);$('pvx').onclick=()=>w.remove();
+}
+$('pdf').onclick=async()=>{
+  const b=$('pdf'),o=b.textContent,doc=buildPdf();
+  const f=t=>{b.textContent=t;setTimeout(()=>{b.textContent=o},2200)};
+  if(!doc){f('Could not create file');return}
+  const name='Weekly_Report_'+S.week+'.pdf';
+  try{
+    const buf=doc.output('arraybuffer');
+    if(D){await D.save({filename:name,data:buf})}
+    else{const u=URL.createObjectURL(new Blob([buf],{type:'application/pdf'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)}
+    f('Saved');
+  }catch(e){if(e&&e.code==='declined')return;preview()}
+};
+$('sh').onclick=async()=>{
+  const b=$('sh'),o=b.textContent,doc=buildPdf();
+  const f=t=>{b.textContent=t;setTimeout(()=>{b.textContent=o},2200)};
+  if(!doc){f('Could not create file');return}
+  const name='Weekly_Report_'+S.week+'.pdf',buf=doc.output('arraybuffer');
+  try{
+    const file=new File([buf],name,{type:'application/pdf'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return}
+  }catch(e){if(e&&e.name==='AbortError')return}
+  if(D){try{await D.save({filename:name,data:buf});f('Saved');return}catch(e){if(e&&e.code==='declined')return}}
+  preview();
+};
+render();
+window.__app={get:()=>S,set:d=>{S.name=String(d.name||'');S.cur=String(d.cur||'$');S.days=d.days&&typeof d.days==='object'?d.days:{}},render:()=>{render();if(MI>=0)drawM()},save:save};
+</script>
+<script type="module">
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const C=window.FIREBASE_CONFIG,COL='restaurants',B='https://www.gstatic.com/firebasejs/10.12.2/';
+const SESS=(new URLSearchParams(window.location.search).get('u')||'default').replace(/[^a-zA-Z0-9_-]/g,'')||'default';
+const okc=!!C&&['apiKey','authDomain','projectId','appId'].every(k=>C[k]&&!/PASTE_/i.test(C[k]));
+let fb,auth,db,user,EM,A,unsub,started=false,starting=false;
+const docs=new Map();let activeId=null,activeRev=0,lastSig='',lastRev=0,dirty=false,pushing=false,pushTimer=null,retryTimer=null,pendingRemote=null,applying=false,stuck=null;
+const myRevs=new Set();
+function scr(n){document.querySelectorAll('#gate .scr').forEach(e=>e.hidden=e.id!=='s-'+n);$('gate').hidden=false;$('appwrap').hidden=true}
+function offline(retry,e){scr('off');$('off-d').textContent=e&&e.code==='permission-denied'?'Access was denied. Check that the Firestore rules are published and that your email is verified.':'';$('off-r').onclick=retry}
+const ERR={'auth/invalid-credential':'Wrong email or password.','auth/wrong-password':'Wrong email or password.','auth/user-not-found':'Wrong email or password.','auth/email-already-in-use':'This email already has an account. Sign in instead.','auth/weak-password':'Password must be at least 6 characters.','auth/invalid-email':'Enter a valid email address.','auth/too-many-requests':'Too many attempts. Wait a few minutes and try again.','auth/network-request-failed':'No connection. Check your internet and try again.'};
+const fe=x=>ERR[x&&x.code]||('Something went wrong ('+((x&&x.code)||(x&&x.message)||'error')+').');
+const say=(id,t)=>{$(id).textContent=t||''};
+async function boot(){
+  if(!okc){scr('setup');return}
+  scr('load');
+  try{
+    const [a,au,fs]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
+    fb={...au,...fs};
+    const app=SESS==='default'?a.initializeApp(C):a.initializeApp(C,SESS);
+    auth=au.getAuth(app);db=fs.getFirestore(app);
+  }catch(e){offline(boot);return}
+  fb.onAuthStateChanged(auth,onAuth);
+}
+async function onAuth(u){
+  if(!u){if(started){location.reload();return}user=null;scr('auth');return}
+  user=u;
+  if(!u.emailVerified){say('v-em',u.email);scr('ver');return}
+  await begin();
+}
+const colQ=()=>fb.query(fb.collection(db,COL),fb.where('memberEmails','array-contains',EM));
+const ref=id=>fb.doc(db,COL,id||activeId);
+async function mkDoc(){
+  const r=fb.doc(fb.collection(db,COL));
+  const v={name:'',ownerUid:user.uid,ownerEmail:EM,memberEmails:[EM],data:{cur:'$',days:{}},rev:Date.now(),createdAt:Date.now()};
+  await fb.setDoc(r,v);docs.set(r.id,{id:r.id,...v});return r.id;
+}
+async function begin(){
+  if(starting||started)return;starting=true;scr('load');
+  try{
+    await user.getIdToken(true);EM=user.email.toLowerCase();
+    docs.clear();(await fb.getDocs(colQ())).forEach(d=>docs.set(d.id,{id:d.id,...d.data()}));
+    if(!docs.size)await mkDoc();
+  }catch(e){starting=false;offline(begin,e);return}
+  const saved=localStorage.getItem('rest_ws_'+SESS+'_'+user.uid),all=[...docs.values()];
+  activeId=docs.has(saved)?saved:(all.find(d=>d.ownerUid===user.uid)||all[0]).id;
+  launch();
+}
+const validW=w=>/^\d{4}-\d{2}-\d{2}$/.test(String(w||''));
+function monday(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function launch(){
+  const CK=window.__CK='rest_acc_'+SESS+'_'+user.uid,d=docs.get(activeId);let w;
+  try{w=JSON.parse(localStorage.getItem(CK)).week}catch(e){}
+  localStorage.setItem(CK,JSON.stringify({name:d.name||'',cur:(d.data&&d.data.cur)||'$',week:validW(w)?w:monday(),days:(d.data&&d.data.days)||{}}));
+  const s=document.createElement('script');s.textContent=$('appjs').textContent;document.body.appendChild(s);
+  A=window.__app;activeRev=d.rev;lastSig=sigOf(cur());window.__onSave=changed;
+  $('gate').hidden=true;$('appwrap').hidden=false;$('sy-me').textContent=EM+(SESS!=='default'?' ['+SESS+']':'');
+  unsub=fb.onSnapshot(colQ(),onSnap,e=>{console.error(e);note('Live updates paused ('+(e.code||'error')+').')});
+  started=true;starting=false;bar();setSt('saved');
+  setInterval(tryRemote,1500);
+}
+const stable=v=>Array.isArray(v)?'['+v.map(stable)+']':(v&&typeof v==='object')?'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+stable(v[k]))+'}':JSON.stringify(v);
+const sigOf=d=>stable(d);
+function cur(){
+  const S=A.get(),days={};
+  Object.keys(S.days).sort().forEach(k=>{const o=S.days[k];if(!o)return;const e=Array.isArray(o.exp)?o.exp:[];
+    if((o.cash!==undefined&&o.cash!=='')||(o.credit!==undefined&&o.credit!=='')||e.length)days[k]=o});
+  return JSON.parse(JSON.stringify({name:S.name,cur:S.cur,days}));
+}
+function setSt(k,t){const m={saving:'Saving…',saved:'Saved to cloud',unsent:'Not saved — will retry'};$('sy-st').textContent=t||m[k];$('sy-dot').className='dot '+k}
+let noteT;function note(t){$('sy-nt').textContent=t;$('sy-nt').hidden=!t;clearTimeout(noteT);if(t)noteT=setTimeout(()=>note(''),8000)}
+function changed(){
+  if(applying||!activeId)return;
+  const sig=sigOf(cur());
+  if(sig===lastSig){dirty=false;clearTimeout(pushTimer);pushTimer=null;if(!pushing)setSt('saved');return}
+  dirty=true;setSt('saving');clearTimeout(pushTimer);pushTimer=setTimeout(push,700);
+}
+async function push(){
+  pushTimer=null;if(!dirty||pushing||!activeId)return;
+  const d=cur(),sig=sigOf(d);
+  if(sig===lastSig){dirty=false;setSt('saved');return}
+  if(new TextEncoder().encode(sig).length>800000){setSt('unsent','Not saved — data too large');return}
+  const id=activeId,rev=Math.max(Date.now(),lastRev+1,activeRev+1);pushing=true;myRevs.add(rev);
+  clearTimeout(stuck);stuck=setTimeout(()=>{if(pushing)setSt('unsent')},8000);
+  try{
+    await fb.updateDoc(ref(id),{name:d.name,data:{cur:d.cur,days:d.days},rev});
+    clearTimeout(stuck);pushing=false;
+    if(id!==activeId)return;
+    lastSig=sig;lastRev=rev;activeRev=Math.max(activeRev,rev);const x=docs.get(id);if(x){x.name=d.name;x.rev=rev}
+    if(pendingRemote&&pendingRemote.rev<rev)pendingRemote=null;
+    if(sigOf(cur())!==lastSig){dirty=true;setSt('saving');pushTimer=setTimeout(push,700)}else{dirty=false;setSt('saved');bar()}
+  }catch(e){
+    console.error(e);clearTimeout(stuck);pushing=false;myRevs.delete(rev);dirty=true;setSt('unsent');
+    clearTimeout(retryTimer);retryTimer=setTimeout(push,5000);
+  }
+}
+window.addEventListener('online',()=>{if(dirty)push()});
+window.addEventListener('offline',()=>{if(dirty)setSt('unsent')});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&dirty){clearTimeout(pushTimer);push()}});
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+const typing=()=>{const a=document.activeElement;return !!a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)&&$('appwrap').contains(a)&&!$('shr').contains(a)&&!$('sy-bar').contains(a)};
+function showDoc(name,data,rev){
+  applying=true;const y=window.scrollY;
+  try{A.set({name:name,cur:data&&data.cur,days:data&&data.days});A.render();A.save()}finally{applying=false}
+  window.scrollTo(0,y);activeRev=rev;lastSig=sigOf(cur());setSt('saved');
+}
+function tryRemote(){
+  if(!pendingRemote||dirty||pushTimer||pushing||typing())return;
+  const r=pendingRemote;pendingRemote=null;
+  if(sigOf({name:r.name||'',cur:r.data.cur||'$',days:r.data.days||{}})===sigOf(cur())){activeRev=r.rev;return}
+  showDoc(r.name||'',r.data,r.rev);
+}
+document.addEventListener('focusout',()=>setTimeout(tryRemote,400));
+function onSnap(snap){
+  snap.docChanges().forEach(ch=>{
+    const d=ch.doc,id=d.id;
+    if(ch.type==='removed'){gone(id);return}
+    if(d.metadata.hasPendingWrites)return;
+    const v=d.data();docs.set(id,{id,...v});
+    if(id===activeId&&v.rev!==activeRev&&!myRevs.has(v.rev)){pendingRemote={name:v.name,data:v.data||{},rev:v.rev};tryRemote()}
+  });
+  bar();renderShare();
+}
+async function gone(id){
+  const x=docs.get(id);if(!x)return;docs.delete(id);
+  if(id!==activeId){bar();return}
+  dirty=false;clearTimeout(pushTimer);pushTimer=null;pendingRemote=null;
+  note('"'+(x.name||'Restaurant')+'" was deleted or is no longer shared with you.');
+  try{
+    if(!docs.size)await mkDoc();
+    const n=[...docs.values()][0];activeId=n.id;localStorage.setItem('rest_ws_'+SESS+'_'+user.uid,n.id);
+    showDoc(n.name||'',n.data,n.rev);
+  }catch(e){setSt('unsent')}
+  bar();renderShare();
+}
+async function flush(){if(dirty){clearTimeout(pushTimer);await push()}return !dirty}
+$('sy-ws').onchange=async e=>{
+  const id=e.target.value;if(id===activeId||!docs.has(id))return;
+  if(!await flush()){note('Unsent changes — try again when you are online.');bar();return}
+  activeId=id;localStorage.setItem('rest_ws_'+SESS+'_'+user.uid,id);pendingRemote=null;const d=docs.get(id);showDoc(d.name||'',d.data,d.rev);bar();
+};
+function bar(){
+  const all=[...docs.values()].sort((a,b)=>(a.ownerUid===user.uid?0:1)-(b.ownerUid===user.uid?0:1)||(a.createdAt||0)-(b.createdAt||0));
+  const s=$('sy-ws');s.hidden=all.length<2;
+  s.innerHTML=all.map(d=>'<option value="'+d.id+'">'+esc((d.name||'Restaurant')+(d.ownerUid===user.uid?'':' (shared)'))+'</option>').join('');s.value=activeId;
+}
+const isOwner=()=>{const d=docs.get(activeId);return !!d&&d.ownerUid===user.uid};
+function renderShare(){
+  const d=docs.get(activeId);if(!d||$('shr').hidden)return;const o=isOwner();
+  $('sy-own').textContent=d.ownerEmail||'';
+  $('sy-ml').innerHTML=(d.memberEmails||[]).filter(e=>e!==d.ownerEmail).map(e=>'<div class="row" style="align-items:center"><span class="n" style="flex:1;direction:ltr;overflow-wrap:anywhere">'+esc(e)+'</span>'+(o?'<button class="x" type="button" data-rm="'+esc(e)+'">×</button>':'')+'</div>').join('')||'<div style="color:var(--mut);font-size:13px">Nobody else yet.</div>';
+  $('sy-add').hidden=!o;$('sy-del').hidden=!o;$('sy-ro').hidden=o;
+}
+const smsg=t=>say('sy-sm',t);
+$('sy-share').onclick=()=>{smsg('');$('shr').hidden=false;renderShare()};
+$('sy-sx').onclick=()=>{$('shr').hidden=true};
+$('sy-ml').onclick=async e=>{
+  const b=e.target.closest('button[data-rm]');if(!b||!isOwner())return;const m=b.dataset.rm;
+  try{await fb.updateDoc(ref(),{memberEmails:fb.arrayRemove(m)});const d=docs.get(activeId);d.memberEmails=d.memberEmails.filter(x=>x!==m);smsg('Removed.');renderShare()}catch(x){smsg('Could not remove ('+(x.code||'error')+').')}
+};
+$('sy-ab').onclick=async()=>{
+  const m=$('sy-em').value.trim().toLowerCase(),d=docs.get(activeId);
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){smsg('Enter a valid email.');return}
+  if(d.memberEmails.includes(m)){smsg('Already added.');return}
+  try{await fb.updateDoc(ref(),{memberEmails:fb.arrayUnion(m)});d.memberEmails=[...d.memberEmails,m];$('sy-em').value='';smsg('Added. They must sign up with this email.');renderShare()}catch(x){smsg('Could not add ('+(x.code||'error')+').')}
+};
+$('sy-del').onclick=async()=>{
+  if(!isOwner()||!confirm('Delete this restaurant and all its data for everyone? This cannot be undone.'))return;
+  try{const id=activeId;await fb.deleteDoc(ref(id));$('shr').hidden=true;gone(id)}catch(x){smsg('Could not delete ('+(x.code||'error')+').')}
+};
+$('sy-out').onclick=async()=>{
+  if(dirty&&!confirm('You have changes not saved to the cloud. Sign out anyway?'))return;
+  try{if(unsub)unsub()}catch(e){}dirty=false;await fb.signOut(auth);location.reload();
+};
+async function doAuth(up){
+  const e=$('a-em').value.trim().toLowerCase(),p=$('a-pw').value;
+  if(!e||!p){say('a-m','Enter your email and password.');return}
+  say('a-m','Please wait…');
+  try{
+    if(up){const c=await fb.createUserWithEmailAndPassword(auth,e,p);await fb.sendEmailVerification(c.user);say('v-m','Verification email sent. Check your inbox and spam folder.')}
+    else await fb.signInWithEmailAndPassword(auth,e,p);
+    say('a-m','');
+  }catch(x){say('a-m',fe(x))}
+}
+$('a-in').onclick=()=>doAuth(false);$('a-up').onclick=()=>doAuth(true);
+$('a-fp').onclick=async()=>{
+  const e=$('a-em').value.trim().toLowerCase();if(!e){say('a-m','Type your email first, then tap Forgot password.');return}
+  try{await fb.sendPasswordResetEmail(auth,e);say('a-m','If this email has an account, a reset link was sent.')}catch(x){say('a-m',fe(x))}
+};
+$('v-ok').onclick=async()=>{
+  try{await user.reload();user=auth.currentUser;if(user.emailVerified){say('v-m','');await begin()}else say('v-m','Not verified yet. Open the link in the email, then tap again.')}catch(x){say('v-m',fe(x))}
+};
+$('v-re').onclick=async()=>{try{await fb.sendEmailVerification(user);say('v-m','Email sent again.')}catch(x){say('v-m',fe(x))}};
+$('v-out').onclick=async()=>{await fb.signOut(auth);say('v-m','')};
+boot();
+</script>
+</body>
+</html>
