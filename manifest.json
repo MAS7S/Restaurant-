@@ -1,1 +1,1 @@
-
+{"name":"Restaurant Accounts","short_name":"Accounts","start_url":"./","scope":"./","display":"standalone","background_color":"#161b2e","theme_color":"#0f8b8d","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png","purpose":"any maskable"},{"src":"icon.svg","sizes":"any","type":"image/svg+xml"}]}
