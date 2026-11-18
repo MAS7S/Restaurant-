@@ -78,6 +78,16 @@ h3{margin:0 0 8px;font-size:15px}
 .mini{font-size:12px;color:var(--mut);margin:10px 0 3px;font-weight:bold}
 .adm-box{margin-top:16px;padding-top:14px;border-top:2px solid var(--bd)}
 </style>
+<link rel="manifest" href="manifest.json">
+
+
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+
+
+<link rel="apple-touch-icon" href="icon.svg">
+
+
+<meta name="theme-color" content="#0f8b8d">
 </head>
 <body>
 <div id="gate" class="gate"><header class="ban"><div class="bn">Restaurant Accounts</div></header><main><section class="scr card" id="s-setup" hidden><h3>Setup needed</h3><p>Open <b>firebase-config.js</b>, replace every PASTE_… value with the settings from your Firebase web app, then reload. See SETUP-AR.md.</p></section><section class="scr card" id="s-load" hidden><h3>Loading…</h3><p>Please wait.</p></section><section class="scr card" id="s-off" hidden><h3>No connection</h3><p>Could not load your data. Check your internet and try again. The app will not open until your data loads.</p><p id="off-d" class="msg"></p><button class="b" id="off-r" type="button">Retry</button></section><section class="scr card" id="s-auth" hidden><h3>Sign in or create account</h3><button class="b gg" id="a-gg" type="button"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Sign in with Google</span></button><div class="divr">or with email</div><label for="a-em">Email</label><input id="a-em" type="email" autocomplete="email" inputmode="email"><label for="a-pw">Password</label><input id="a-pw" type="password" autocomplete="current-password"><button class="b" id="a-in" type="button">Sign in</button><button class="b o" id="a-up" type="button">Create account</button><button class="b o" id="a-fp" type="button">Forgot password</button><div class="msg" id="a-m"></div></section><section class="scr card" id="s-ver" hidden><h3>Verify your email</h3><p>We sent a verification link to <b id="v-em" style="direction:ltr;display:inline-block"></b>. Open it, then tap the button below.</p><button class="b" id="v-ok" type="button">I verified</button><button class="b o" id="v-re" type="button">Resend email</button><button class="b o" id="v-out" type="button">Use another account</button><div class="msg" id="v-m"></div></section><section class="scr card" id="s-deny" hidden><h3 style="color:var(--r)">Access Restricted</h3><p>This app is invite-only. Your email (<b id="dn-em" style="direction:ltr;display:inline-block"></b>) has not been invited yet.</p><p style="color:var(--mut)">Ask the administrator or a restaurant owner to add your email, then tap Retry.</p><button class="b" id="dn-re" type="button">Retry</button><button class="b o" id="dn-out" type="button">Sign out</button></section></main></div>
@@ -601,5 +611,6 @@ $('v-re').onclick=async()=>{try{await fb.sendEmailVerification(user);say('v-m','
 $('v-out').onclick=async()=>{await fb.signOut(auth);say('v-m','')};
 boot();
 </script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');</script>
 </body>
 </html>
