@@ -74,10 +74,11 @@ h3{margin:0 0 8px;font-size:15px}
 .sy select{width:auto;max-width:100%;padding:6px 24px 6px 8px;font-size:14px}.me{color:var(--mut);flex:1 1 100%;direction:ltr;overflow-wrap:anywhere}
 .nt{flex:1 1 100%;background:#381819;color:#e8736f;border-radius:10px;padding:8px 10px}
 .mini{font-size:12px;color:var(--mut);margin:10px 0 3px;font-weight:bold}
+.adm-box{margin-top:16px;padding-top:14px;border-top:2px solid var(--bd)}
 </style>
 </head>
 <body>
-<div id="gate" class="gate"><header class="ban"><div class="bn">Restaurant Accounts</div></header><main><section class="scr card" id="s-setup" hidden><h3>Setup needed</h3><p>Open <b>firebase-config.js</b>, replace every PASTE_… value with the settings from your Firebase web app, then reload. See SETUP-AR.md.</p></section><section class="scr card" id="s-load" hidden><h3>Loading…</h3><p>Please wait.</p></section><section class="scr card" id="s-off" hidden><h3>No connection</h3><p>Could not load your data. Check your internet and try again. The app will not open until your data loads.</p><p id="off-d" class="msg"></p><button class="b" id="off-r" type="button">Retry</button></section><section class="scr card" id="s-auth" hidden><h3>Sign in or create account</h3><button class="b gg" id="a-gg" type="button"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Sign in with Google</span></button><div class="divr">or with email</div><label for="a-em">Email</label><input id="a-em" type="email" autocomplete="email" inputmode="email"><label for="a-pw">Password</label><input id="a-pw" type="password" autocomplete="current-password"><button class="b" id="a-in" type="button">Sign in</button><button class="b o" id="a-up" type="button">Create account</button><button class="b o" id="a-fp" type="button">Forgot password</button><div class="msg" id="a-m"></div></section><section class="scr card" id="s-ver" hidden><h3>Verify your email</h3><p>We sent a verification link to <b id="v-em" style="direction:ltr;display:inline-block"></b>. Open it, then tap the button below.</p><button class="b" id="v-ok" type="button">I verified</button><button class="b o" id="v-re" type="button">Resend email</button><button class="b o" id="v-out" type="button">Use another account</button><div class="msg" id="v-m"></div></section></main></div>
+<div id="gate" class="gate"><header class="ban"><div class="bn">Restaurant Accounts</div></header><main><section class="scr card" id="s-setup" hidden><h3>Setup needed</h3><p>Open <b>firebase-config.js</b>, replace every PASTE_… value with the settings from your Firebase web app, then reload. See SETUP-AR.md.</p></section><section class="scr card" id="s-load" hidden><h3>Loading…</h3><p>Please wait.</p></section><section class="scr card" id="s-off" hidden><h3>No connection</h3><p>Could not load your data. Check your internet and try again. The app will not open until your data loads.</p><p id="off-d" class="msg"></p><button class="b" id="off-r" type="button">Retry</button></section><section class="scr card" id="s-auth" hidden><h3>Sign in or create account</h3><button class="b gg" id="a-gg" type="button"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Sign in with Google</span></button><div class="divr">or with email</div><label for="a-em">Email</label><input id="a-em" type="email" autocomplete="email" inputmode="email"><label for="a-pw">Password</label><input id="a-pw" type="password" autocomplete="current-password"><button class="b" id="a-in" type="button">Sign in</button><button class="b o" id="a-up" type="button">Create account</button><button class="b o" id="a-fp" type="button">Forgot password</button><div class="msg" id="a-m"></div></section><section class="scr card" id="s-ver" hidden><h3>Verify your email</h3><p>We sent a verification link to <b id="v-em" style="direction:ltr;display:inline-block"></b>. Open it, then tap the button below.</p><button class="b" id="v-ok" type="button">I verified</button><button class="b o" id="v-re" type="button">Resend email</button><button class="b o" id="v-out" type="button">Use another account</button><div class="msg" id="v-m"></div></section><section class="scr card" id="s-deny" hidden><h3 style="color:var(--r)">Access Restricted</h3><p>This app is invite-only. Your email (<b id="dn-em" style="direction:ltr;display:inline-block"></b>) has not been invited yet.</p><p style="color:var(--mut)">Ask the administrator or a restaurant owner to add your email, then tap Retry.</p><button class="b" id="dn-re" type="button">Retry</button><button class="b o" id="dn-out" type="button">Sign out</button></section></main></div>
 <div id="appwrap" hidden><header class="ban"><div class="bn" id="bn">Restaurant Accounts</div><div class="bt" id="bt"></div></header>
 <div class="sy" id="sy-bar"><div class="st"><span class="dot saved" id="sy-dot"></span><span id="sy-st">Saved to cloud</span></div><select id="sy-ws" hidden></select><button id="sy-share" type="button">Share</button><button class="o" id="sy-out" type="button">Sign out</button><div class="me" id="sy-me"></div><div class="nt" id="sy-nt" hidden></div></div>
 <main>
@@ -91,7 +92,9 @@ h3{margin:0 0 8px;font-size:15px}
 <div class="btns"><button class="b" id="sh" type="button">Share PDF</button><button class="b" id="pdf" type="button" style="background:#0f8b8d">Save PDF</button><button class="b s" id="nx" type="button">Next week</button></div>
 </main>
 <div class="md" id="md" hidden><div class="sheet"><div class="mh"><h3 id="mt"></h3><button id="mx" type="button">Done</button></div><div id="ml"></div><div class="addrow"><button class="add" id="ma" type="button" style="background:var(--g)">+ Cash expense</button><button class="add" id="mb" type="button" style="background:#1f4fb2">+ Credit expense</button></div><div class="mc"><div>CASH EXPENSES<b id="mc"></b></div><div>CREDIT EXPENSES<b id="mk"></b></div></div></div></div>
-<div class="md" id="shr" hidden><div class="sheet"><div class="mh"><h3>Share</h3><button id="sy-sx" type="button">Done</button></div><div class="mini">OWNER</div><div id="sy-own" style="direction:ltr;overflow-wrap:anywhere"></div><div class="mini">MEMBERS (can edit everything)</div><div id="sy-ml"></div><div id="sy-add"><label for="sy-em">Add member email</label><div class="addrow"><input id="sy-em" type="email" inputmode="email" placeholder="worker@example.com"><button class="add" id="sy-ab" type="button" style="flex:0 0 90px;background:var(--g)">Add</button></div><p style="font-size:12px;color:var(--mut)">They sign in with Google or create an account with this same email.</p></div><p id="sy-ro" style="font-size:13px;color:var(--mut)" hidden>Only the owner can change who has access or delete this restaurant.</p><div class="msg" id="sy-sm"></div><button class="add" id="sy-del" type="button" style="margin-top:8px" hidden>Delete this restaurant</button></div></div></div>
+<div class="md" id="shr" hidden><div class="sheet"><div class="mh"><h3>Share</h3><button id="sy-sx" type="button">Done</button></div><div class="mini">OWNER</div><div id="sy-own" style="direction:ltr;overflow-wrap:anywhere"></div><div class="mini">MEMBERS (can edit everything)</div><div id="sy-ml"></div><div id="sy-add"><label for="sy-em">Add member email</label><div class="addrow"><input id="sy-em" type="email" inputmode="email" placeholder="worker@example.com"><button class="add" id="sy-ab" type="button" style="flex:0 0 90px;background:var(--g)">Add</button></div><p style="font-size:12px;color:var(--mut)">They sign in with Google or create an account with this same email.</p></div><p id="sy-ro" style="font-size:13px;color:var(--mut)" hidden>Only the owner can change who has access or delete this restaurant.</p><div class="msg" id="sy-sm"></div><button class="add" id="sy-del" type="button" style="margin-top:8px" hidden>Delete this restaurant</button>
+<div class="adm-box" id="adm-box" hidden><h3 style="color:#2f6fdb">Admin: Approved Restaurant Owners</h3><p style="font-size:12px;color:var(--mut)">Only emails listed here can create their own independent restaurant.</p><div id="adm-list"></div><label for="adm-em">Approve new owner email</label><div class="addrow"><input id="adm-em" type="email" inputmode="email" placeholder="friend@gmail.com"><button class="add" id="adm-ab" type="button" style="flex:0 0 90px;background:#2f6fdb">Approve</button></div><div class="msg" id="adm-m"></div></div>
+</div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="firebase-config.js"></script>
 <script type="text/plain" id="appjs">
@@ -267,6 +270,7 @@ render();
 window.__app={get:()=>S,set:d=>{S.name=String(d.name||'');S.cur=String(d.cur||'$');S.days=d.days&&typeof d.days==='object'?d.days:{}},render:()=>{render();if(MI>=0)drawM()},save:save};
 </script>
 <script type="module">
+const ADMIN_EMAIL='malekshahbien@gmail.com';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const C=window.FIREBASE_CONFIG,COL='restaurants',B='https://www.gstatic.com/firebasejs/10.12.2/';
@@ -293,7 +297,7 @@ const SESS=(()=>{
   return k;
 })();
 const okc=!!C&&['apiKey','authDomain','projectId','appId'].every(k=>C[k]&&!/PASTE_/i.test(C[k]));
-let fb,auth,db,user,EM,A,unsub,started=false,starting=false;
+let fb,auth,db,user,EM,A,unsub,started=false,starting=false,approvedOwners=[];
 const docs=new Map();let activeId=null,activeRev=0,lastSig='',lastRev=0,dirty=false,pushing=false,pushTimer=null,retryTimer=null,pendingRemote=null,applying=false,stuck=null;
 const myRevs=new Set();
 function scr(n){document.querySelectorAll('#gate .scr').forEach(e=>e.hidden=e.id!=='s-'+n);$('gate').hidden=false;$('appwrap').hidden=true}
@@ -320,6 +324,7 @@ async function onAuth(u){
 }
 const colQ=()=>fb.query(fb.collection(db,COL),fb.where('memberEmails','array-contains',EM));
 const ref=id=>fb.doc(db,COL,id||activeId);
+const cfgRef=()=>fb.doc(db,'app_config','invites');
 async function mkDoc(){
   const r=fb.doc(fb.collection(db,COL));
   const v={name:'',ownerUid:user.uid,ownerEmail:EM,memberEmails:[EM],data:{cur:'$',days:{}},rev:Date.now(),createdAt:Date.now()};
@@ -330,12 +335,33 @@ async function begin(){
   try{
     await user.getIdToken(true);EM=user.email.toLowerCase();
     docs.clear();(await fb.getDocs(colQ())).forEach(d=>docs.set(d.id,{id:d.id,...d.data()}));
-    if(!docs.size)await mkDoc();
+    if(!docs.size){
+      let allowed=(EM===ADMIN_EMAIL);
+      if(!allowed){
+        const snap=await fb.getDoc(cfgRef());
+        const list=(snap.exists()&&Array.isArray(snap.data().owners))?snap.data().owners:[];
+        allowed=list.includes(EM);
+      }
+      if(!allowed){
+        starting=false;
+        $('dn-em').textContent=EM;
+        scr('deny');
+        return;
+      }
+      await mkDoc();
+    }
+    if(EM===ADMIN_EMAIL){
+      const snap=await fb.getDoc(cfgRef());
+      if(!snap.exists()){await fb.setDoc(cfgRef(),{owners:[]});approvedOwners=[]}
+      else{approvedOwners=Array.isArray(snap.data().owners)?snap.data().owners:[]}
+    }
   }catch(e){starting=false;offline(begin,e);return}
   const saved=localStorage.getItem('rest_ws_'+SESS+'_'+user.uid),all=[...docs.values()];
   activeId=docs.has(saved)?saved:(all.find(d=>d.ownerUid===user.uid)||all[0]).id;
   launch();
 }
+$('dn-re').onclick=()=>begin();
+$('dn-out').onclick=async()=>{await fb.signOut(auth);location.reload()};
 const validW=w=>/^\d{4}-\d{2}-\d{2}$/.test(String(w||''));
 function monday(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function launch(){
@@ -417,7 +443,10 @@ async function gone(id){
   dirty=false;clearTimeout(pushTimer);pushTimer=null;pendingRemote=null;
   note('"'+(x.name||'Restaurant')+'" was deleted or is no longer shared with you.');
   try{
-    if(!docs.size)await mkDoc();
+    if(!docs.size){
+      if(EM===ADMIN_EMAIL)await mkDoc();
+      else{$('dn-em').textContent=EM;scr('deny');return}
+    }
     const n=[...docs.values()][0];activeId=n.id;localStorage.setItem('rest_ws_'+SESS+'_'+user.uid,n.id);
     showDoc(n.name||'',n.data,n.rev);
   }catch(e){setSt('unsent')}
@@ -435,14 +464,21 @@ function bar(){
   s.innerHTML=all.map(d=>'<option value="'+d.id+'">'+esc((d.name||'Restaurant')+(d.ownerUid===user.uid?'':' (shared)'))+'</option>').join('');s.value=activeId;
 }
 const isOwner=()=>{const d=docs.get(activeId);return !!d&&d.ownerUid===user.uid};
+function renderAdmin(){
+  const isAdm=(EM===ADMIN_EMAIL);
+  $('adm-box').hidden=!isAdm;
+  if(!isAdm)return;
+  $('adm-list').innerHTML=approvedOwners.map(e=>'<div class="row" style="align-items:center"><span class="n" style="flex:1;direction:ltr;overflow-wrap:anywhere">'+esc(e)+'</span><button class="x" type="button" data-adm-rm="'+esc(e)+'">×</button></div>').join('')||'<div style="color:var(--mut);font-size:13px;margin-bottom:8px">No approved owners yet.</div>';
+}
 function renderShare(){
   const d=docs.get(activeId);if(!d||$('shr').hidden)return;const o=isOwner();
   $('sy-own').textContent=d.ownerEmail||'';
   $('sy-ml').innerHTML=(d.memberEmails||[]).filter(e=>e!==d.ownerEmail).map(e=>'<div class="row" style="align-items:center"><span class="n" style="flex:1;direction:ltr;overflow-wrap:anywhere">'+esc(e)+'</span>'+(o?'<button class="x" type="button" data-rm="'+esc(e)+'">×</button>':'')+'</div>').join('')||'<div style="color:var(--mut);font-size:13px">Nobody else yet.</div>';
   $('sy-add').hidden=!o;$('sy-del').hidden=!o;$('sy-ro').hidden=o;
+  renderAdmin();
 }
 const smsg=t=>say('sy-sm',t);
-$('sy-share').onclick=()=>{smsg('');$('shr').hidden=false;renderShare()};
+$('sy-share').onclick=()=>{smsg('');say('adm-m','');$('shr').hidden=false;renderShare()};
 $('sy-sx').onclick=()=>{$('shr').hidden=true};
 $('sy-ml').onclick=async e=>{
   const b=e.target.closest('button[data-rm]');if(!b||!isOwner())return;const m=b.dataset.rm;
@@ -452,7 +488,27 @@ $('sy-ab').onclick=async()=>{
   const m=$('sy-em').value.trim().toLowerCase(),d=docs.get(activeId);
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){smsg('Enter a valid email.');return}
   if(d.memberEmails.includes(m)){smsg('Already added.');return}
-  try{await fb.updateDoc(ref(),{memberEmails:fb.arrayUnion(m)});d.memberEmails=[...d.memberEmails,m];$('sy-em').value='';smsg('Added. They must sign in with this email.');renderShare()}catch(x){smsg('Could not add ('+(x.code||'error')+').')}
+  try{await fb.updateDoc(ref(),{memberEmails:fb.arrayUnion(m)});d.memberEmails=[...d.memberEmails,m];$('sy-em').value='';smsg('Added. They can now sign in with this email.');renderShare()}catch(x){smsg('Could not add ('+(x.code||'error')+').')}
+};
+$('adm-ab').onclick=async()=>{
+  if(EM!==ADMIN_EMAIL)return;
+  const m=$('adm-em').value.trim().toLowerCase();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){say('adm-m','Enter a valid email.');return}
+  if(approvedOwners.includes(m)){say('adm-m','Already approved.');return}
+  try{
+    await fb.setDoc(cfgRef(),{owners:fb.arrayUnion(m)},{merge:true});
+    approvedOwners=[...approvedOwners,m];$('adm-em').value='';
+    say('adm-m','Approved! They can now sign in and create their own restaurant.');
+    renderAdmin();
+  }catch(x){say('adm-m','Error ('+(x.code||'error')+').')}
+};
+$('adm-list').onclick=async e=>{
+  const b=e.target.closest('button[data-adm-rm]');if(!b||EM!==ADMIN_EMAIL)return;const m=b.dataset.admRm;
+  try{
+    await fb.updateDoc(cfgRef(),{owners:fb.arrayRemove(m)});
+    approvedOwners=approvedOwners.filter(x=>x!==m);
+    say('adm-m','Removed from approved list.');renderAdmin();
+  }catch(x){say('adm-m','Error ('+(x.code||'error')+').')}
 };
 $('sy-del').onclick=async()=>{
   if(!isOwner()||!confirm('Delete this restaurant and all its data for everyone? This cannot be undone.'))return;
