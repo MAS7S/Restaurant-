@@ -71,7 +71,9 @@ h3{margin:0 0 8px;font-size:15px}
 .sy .st{flex:1 1 150px;display:flex;align-items:center;gap:6px;font-weight:bold}.dot{width:10px;height:10px;border-radius:50%;background:#2f9e44}
 .dot.saving{background:#f2c14e}.dot.unsent{background:var(--r)}
 .sy button{border:0;border-radius:10px;background:#2f6fdb;color:#fff;font:bold 13px Arial;padding:8px 12px;cursor:pointer}.sy button.o{background:transparent;color:var(--mut);border:1px solid var(--bd)}
-.sy select{width:auto;max-width:100%;padding:6px 24px 6px 8px;font-size:14px}.me{color:var(--mut);flex:1 1 100%;direction:ltr;overflow-wrap:anywhere}
+.sy select{width:auto;max-width:100%;padding:6px 24px 6px 8px;font-size:14px}
+.me-box{flex:1 1 100%;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:bold;color:var(--tx)}
+.ed-btn{background:transparent!important;color:var(--b)!important;border:1px solid var(--bd)!important;padding:3px 8px!important;font-size:12px!important;border-radius:8px!important}
 .nt{flex:1 1 100%;background:#381819;color:#e8736f;border-radius:10px;padding:8px 10px}
 .mini{font-size:12px;color:var(--mut);margin:10px 0 3px;font-weight:bold}
 .adm-box{margin-top:16px;padding-top:14px;border-top:2px solid var(--bd)}
@@ -80,7 +82,7 @@ h3{margin:0 0 8px;font-size:15px}
 <body>
 <div id="gate" class="gate"><header class="ban"><div class="bn">Restaurant Accounts</div></header><main><section class="scr card" id="s-setup" hidden><h3>Setup needed</h3><p>Open <b>firebase-config.js</b>, replace every PASTE_… value with the settings from your Firebase web app, then reload. See SETUP-AR.md.</p></section><section class="scr card" id="s-load" hidden><h3>Loading…</h3><p>Please wait.</p></section><section class="scr card" id="s-off" hidden><h3>No connection</h3><p>Could not load your data. Check your internet and try again. The app will not open until your data loads.</p><p id="off-d" class="msg"></p><button class="b" id="off-r" type="button">Retry</button></section><section class="scr card" id="s-auth" hidden><h3>Sign in or create account</h3><button class="b gg" id="a-gg" type="button"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Sign in with Google</span></button><div class="divr">or with email</div><label for="a-em">Email</label><input id="a-em" type="email" autocomplete="email" inputmode="email"><label for="a-pw">Password</label><input id="a-pw" type="password" autocomplete="current-password"><button class="b" id="a-in" type="button">Sign in</button><button class="b o" id="a-up" type="button">Create account</button><button class="b o" id="a-fp" type="button">Forgot password</button><div class="msg" id="a-m"></div></section><section class="scr card" id="s-ver" hidden><h3>Verify your email</h3><p>We sent a verification link to <b id="v-em" style="direction:ltr;display:inline-block"></b>. Open it, then tap the button below.</p><button class="b" id="v-ok" type="button">I verified</button><button class="b o" id="v-re" type="button">Resend email</button><button class="b o" id="v-out" type="button">Use another account</button><div class="msg" id="v-m"></div></section><section class="scr card" id="s-deny" hidden><h3 style="color:var(--r)">Access Restricted</h3><p>This app is invite-only. Your email (<b id="dn-em" style="direction:ltr;display:inline-block"></b>) has not been invited yet.</p><p style="color:var(--mut)">Ask the administrator or a restaurant owner to add your email, then tap Retry.</p><button class="b" id="dn-re" type="button">Retry</button><button class="b o" id="dn-out" type="button">Sign out</button></section></main></div>
 <div id="appwrap" hidden><header class="ban"><div class="bn" id="bn">Restaurant Accounts</div><div class="bt" id="bt"></div></header>
-<div class="sy" id="sy-bar"><div class="st"><span class="dot saved" id="sy-dot"></span><span id="sy-st">Saved to cloud</span></div><select id="sy-ws" hidden></select><button id="sy-share" type="button" hidden>Share</button><button class="o" id="sy-out" type="button">Sign out</button><div class="me" id="sy-me"></div><div class="nt" id="sy-nt" hidden></div></div>
+<div class="sy" id="sy-bar"><div class="st"><span class="dot saved" id="sy-dot"></span><span id="sy-st">Saved to cloud</span></div><select id="sy-ws" hidden></select><button id="sy-share" type="button" hidden>Share</button><button class="o" id="sy-out" type="button">Sign out</button><div class="me-box"><span id="sy-me"></span><button type="button" class="ed-btn" id="sy-edname" title="Edit display name">✏️ Edit Name</button></div><div class="nt" id="sy-nt" hidden></div></div>
 <main>
 <section class="card">
 <label for="nm">Restaurant name</label><input id="nm" placeholder="Restaurant name">
@@ -94,7 +96,9 @@ h3{margin:0 0 8px;font-size:15px}
 <div class="md" id="md" hidden><div class="sheet"><div class="mh"><h3 id="mt"></h3><button id="mx" type="button">Done</button></div><div id="ml"></div><div class="addrow"><button class="add" id="ma" type="button" style="background:var(--g)">+ Cash expense</button><button class="add" id="mb" type="button" style="background:#1f4fb2">+ Credit expense</button></div><div class="mc"><div>CASH EXPENSES<b id="mc"></b></div><div>CREDIT EXPENSES<b id="mk"></b></div></div></div></div>
 <div class="md" id="shr" hidden><div class="sheet"><div class="mh"><h3>Share</h3><button id="sy-sx" type="button">Done</button></div><div class="mini">OWNER</div><div id="sy-own" style="direction:ltr;overflow-wrap:anywhere"></div><div class="mini">MEMBERS (can edit everything)</div><div id="sy-ml"></div><div id="sy-add"><label for="sy-em">Add member email</label><div class="addrow"><input id="sy-em" type="email" inputmode="email" placeholder="worker@example.com"><button class="add" id="sy-ab" type="button" style="flex:0 0 90px;background:var(--g)">Add</button></div><p style="font-size:12px;color:var(--mut)">They sign in with Google or create an account with this same email.</p></div><p id="sy-ro" style="font-size:13px;color:var(--mut)" hidden>Only the owner can change who has access or delete this restaurant.</p><div class="msg" id="sy-sm"></div><button class="add" id="sy-del" type="button" style="margin-top:8px" hidden>Delete this restaurant</button>
 <div class="adm-box" id="adm-box" hidden><h3 style="color:#2f6fdb">Admin: Approved Restaurant Owners</h3><p style="font-size:12px;color:var(--mut)">Only emails listed here can create their own independent restaurant.</p><div id="adm-list"></div><label for="adm-em">Approve new owner email</label><div class="addrow"><input id="adm-em" type="email" inputmode="email" placeholder="friend@gmail.com"><button class="add" id="adm-ab" type="button" style="flex:0 0 90px;background:#2f6fdb">Approve</button></div><div class="msg" id="adm-m"></div></div>
-</div></div></div>
+</div></div>
+<div class="md" id="namemd" hidden><div class="sheet"><div class="mh"><h3 style="color:#2f6fdb">Display Name</h3><button id="nm-close" type="button" hidden>Cancel</button></div><p style="font-size:13px;color:var(--mut);margin:0 0 10px">Enter the name you want displayed in the app instead of your email. You can change it anytime.</p><label for="nm-inp">Your Name</label><div class="addrow"><input id="nm-inp" placeholder="e.g. Malek / Manager / Cashier"><button class="add" id="nm-save" type="button" style="flex:0 0 95px;background:var(--g)">Save</button></div><div class="msg" id="nm-msg"></div></div></div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="firebase-config.js"></script>
 <script type="text/plain" id="appjs">
@@ -327,7 +331,7 @@ const ref=id=>fb.doc(db,COL,id||activeId);
 const cfgRef=()=>fb.doc(db,'app_config','invites');
 async function mkDoc(){
   const r=fb.doc(fb.collection(db,COL));
-  const v={name:'',ownerUid:user.uid,ownerEmail:EM,memberEmails:[EM],data:{cur:'$',days:{}},rev:Date.now(),createdAt:Date.now()};
+  const v={name:'',ownerUid:user.uid,ownerEmail:EM,memberEmails:[EM],memberNames:{},data:{cur:'$',days:{}},rev:Date.now(),createdAt:Date.now()};
   await fb.setDoc(r,v);docs.set(r.id,{id:r.id,...v});return r.id;
 }
 async function begin(){
@@ -364,16 +368,55 @@ $('dn-re').onclick=()=>begin();
 $('dn-out').onclick=async()=>{await fb.signOut(auth);location.reload()};
 const validW=w=>/^\d{4}-\d{2}-\d{2}$/.test(String(w||''));
 function monday(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const emKey=e=>String(e||'').replace(/\./g,'_');
+function myDisplayName(){
+  const d=docs.get(activeId);
+  const map=(d&&d.memberNames&&typeof d.memberNames==='object')?d.memberNames:{};
+  return (map[emKey(EM)]||localStorage.getItem('rest_dname_'+EM)||'').trim();
+}
+function updateNameUI(){
+  const nm=myDisplayName();
+  $('sy-me').textContent=nm||EM;
+}
+function promptName(allowCancel){
+  $('nm-inp').value=myDisplayName();
+  say('nm-msg','');
+  $('nm-close').hidden=!allowCancel;
+  $('namemd').hidden=false;
+  setTimeout(()=>$('nm-inp').focus(),100);
+}
+$('sy-edname').onclick=()=>promptName(true);
+$('nm-close').onclick=()=>{$('namemd').hidden=true};
+$('nm-save').onclick=async()=>{
+  const val=$('nm-inp').value.trim();
+  if(!val){say('nm-msg','Please enter a name.');return}
+  say('nm-msg','Saving…');
+  try{
+    localStorage.setItem('rest_dname_'+EM,val);
+    const k='memberNames.'+emKey(EM);
+    await fb.updateDoc(ref(),{[k]:val});
+    const d=docs.get(activeId);
+    if(d){if(!d.memberNames)d.memberNames={};d.memberNames[emKey(EM)]=val}
+    updateNameUI();
+    renderShare();
+    $('namemd').hidden=true;
+    say('nm-msg','');
+  }catch(e){
+    say('nm-msg','Could not save ('+(e.code||'error')+').');
+  }
+};
 function launch(){
   const CK=window.__CK='rest_acc_'+SESS+'_'+user.uid,d=docs.get(activeId);let w;
   try{w=JSON.parse(localStorage.getItem(CK)).week}catch(e){}
   localStorage.setItem(CK,JSON.stringify({name:d.name||'',cur:(d.data&&d.data.cur)||'$',week:validW(w)?w:monday(),days:(d.data&&d.data.days)||{}}));
   const s=document.createElement('script');s.textContent=$('appjs').textContent;document.body.appendChild(s);
   A=window.__app;activeRev=d.rev;lastSig=sigOf(cur());window.__onSave=changed;
-  $('gate').hidden=true;$('appwrap').hidden=false;$('sy-me').textContent=EM+(SESS!=='default'?' ['+SESS+']':'');
+  $('gate').hidden=true;$('appwrap').hidden=false;
+  updateNameUI();
   unsub=fb.onSnapshot(colQ(),onSnap,e=>{console.error(e);note('Live updates paused ('+(e.code||'error')+').')});
   started=true;starting=false;bar();setSt('saved');
   setInterval(tryRemote,1500);
+  if(!myDisplayName())promptName(false);
 }
 const stable=v=>Array.isArray(v)?'['+v.map(stable)+']':(v&&typeof v==='object')?'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+stable(v[k]))+'}':JSON.stringify(v);
 const sigOf=d=>stable(d);
@@ -414,7 +457,7 @@ window.addEventListener('online',()=>{if(dirty)push()});
 window.addEventListener('offline',()=>{if(dirty)setSt('unsent')});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&dirty){clearTimeout(pushTimer);push()}});
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
-const typing=()=>{const a=document.activeElement;return !!a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)&&$('appwrap').contains(a)&&!$('shr').contains(a)&&!$('sy-bar').contains(a)};
+const typing=()=>{const a=document.activeElement;return !!a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)&&$('appwrap').contains(a)&&!$('shr').contains(a)&&!$('sy-bar').contains(a)&&!$('namemd').contains(a)};
 function showDoc(name,data,rev){
   applying=true;const y=window.scrollY;
   try{A.set({name:name,cur:data&&data.cur,days:data&&data.days});A.render();A.save()}finally{applying=false}
@@ -435,7 +478,7 @@ function onSnap(snap){
     const v=d.data();docs.set(id,{id,...v});
     if(id===activeId&&v.rev!==activeRev&&!myRevs.has(v.rev)){pendingRemote={name:v.name,data:v.data||{},rev:v.rev};tryRemote()}
   });
-  bar();renderShare();
+  updateNameUI();bar();renderShare();
 }
 async function gone(id){
   const x=docs.get(id);if(!x)return;docs.delete(id);
@@ -450,13 +493,13 @@ async function gone(id){
     const n=[...docs.values()][0];activeId=n.id;localStorage.setItem('rest_ws_'+SESS+'_'+user.uid,n.id);
     showDoc(n.name||'',n.data,n.rev);
   }catch(e){setSt('unsent')}
-  bar();renderShare();
+  updateNameUI();bar();renderShare();
 }
 async function flush(){if(dirty){clearTimeout(pushTimer);await push()}return !dirty}
 $('sy-ws').onchange=async e=>{
   const id=e.target.value;if(id===activeId||!docs.has(id))return;
   if(!await flush()){note('Unsent changes — try again when you are online.');bar();return}
-  activeId=id;localStorage.setItem('rest_ws_'+SESS+'_'+user.uid,id);pendingRemote=null;const d=docs.get(id);showDoc(d.name||'',d.data,d.rev);bar();
+  activeId=id;localStorage.setItem('rest_ws_'+SESS+'_'+user.uid,id);pendingRemote=null;const d=docs.get(id);showDoc(d.name||'',d.data,d.rev);updateNameUI();bar();
 };
 const isOwner=()=>{const d=docs.get(activeId);return !!d&&d.ownerUid===user.uid};
 function bar(){
@@ -474,8 +517,14 @@ function renderAdmin(){
 function renderShare(){
   const d=docs.get(activeId);if(!d||$('shr').hidden)return;const o=isOwner();
   if(!o){$('shr').hidden=true;return}
-  $('sy-own').textContent=d.ownerEmail||'';
-  $('sy-ml').innerHTML=(d.memberEmails||[]).filter(e=>e!==d.ownerEmail).map(e=>'<div class="row" style="align-items:center"><span class="n" style="flex:1;direction:ltr;overflow-wrap:anywhere">'+esc(e)+'</span><button class="x" type="button" data-rm="'+esc(e)+'">×</button></div>').join('')||'<div style="color:var(--mut);font-size:13px">Nobody else yet.</div>';
+  const map=(d.memberNames&&typeof d.memberNames==='object')?d.memberNames:{};
+  const ownNm=map[emKey(d.ownerEmail)];
+  $('sy-own').textContent=ownNm?(ownNm+' ('+d.ownerEmail+')'):(d.ownerEmail||'');
+  $('sy-ml').innerHTML=(d.memberEmails||[]).filter(e=>e!==d.ownerEmail).map(e=>{
+    const mNm=map[emKey(e)];
+    const label=mNm?(esc(mNm)+' <span style="color:var(--mut);font-size:12px">('+esc(e)+')</span>'):esc(e);
+    return '<div class="row" style="align-items:center"><span class="n" style="flex:1;direction:ltr;overflow-wrap:anywhere">'+label+'</span><button class="x" type="button" data-rm="'+esc(e)+'">×</button></div>';
+  }).join('')||'<div style="color:var(--mut);font-size:13px">Nobody else yet.</div>';
   $('sy-add').hidden=false;$('sy-del').hidden=false;$('sy-ro').hidden=true;
   renderAdmin();
 }
